@@ -8,13 +8,30 @@ Appendicitis can be difficult to identify in children because its symptoms may r
 
 This project examines whether machine-learning models can distinguish pediatric appendicitis cases from non-appendicitis cases, and whether adding ultrasound findings improves predictions.
 
+**Context and target**
+ The model predicts the patient’s diagnosis, classifying it as either appendicitis or no appendicitis.
+
+**Task**
+ This project uses supervised binary classification to predict whether a patient has appendicitis. It compares predictions based on clinical and laboratory data with predictions that also include selected ultrasound findings.
+
+**Objectives and success criteria**
+Evaluate and compare the models using accuracy, precision, recall, F1-score, and ROC-AUC. 
+- The project aims to achieve a test ROC-AUC of at least 0.80 and an appendicitis recall of at least 0.85. 
+- These targets are for project evaluation only, not for clinical use.
+
+**Intended users and impact:** This project is intended for students and researchers studying machine learning in pediatric healthcare. It explores how patient information can estimate appendicitis risk. The model is for educational purposes only and must not be used to diagnose patients or guide treatment.
+
+**Assumptions and Constraints**
+- The study is based on a limited dataset obtained from a single source. Missing values may affect the analysis and require appropriate preprocessing. 
+- The model's performance may not generalise to other patient populations. Therefore, validation using independent external datasets is necessary before considering any real-world application.
+
 ## Objective
 
 The main objective of this project is to:
 - Develop a reliable machine learning model for appendicitis prediction
 - Compare models using clinical laboratory features with models that also use selected ultrasound features.
 - Evaluate model performance using a held-out test set and cross-validation.
-- Present predictions through a streamlit prototype.
+- Present predictions through a Streamlit prototype.
 
 ## Dataset
 
@@ -29,17 +46,41 @@ Link: https://archive.ics.uci.edu/dataset/938/regensburg+pediatric+appendicitis
 
 The dataset contains pediatric patient records with demographic, clinical, laboratory, and ultrasound-related variables.
 
-## Features Used
+**Size and target**
 
-The model uses a mix of:
-- age and sex
-- BMI, height, and weight
-- temperature
-- CBC (complete blood count) values
-- CRP
-- urine test findings
-- symptoms such as pain, nausea, loss of appetite, and rebound tenderness
-- ultrasound findings including appendix diameter, free fluid, and tissue reaction
+The dataset contains 782 patient records and 58 columns: 57 potential input variables and the target, **Diagnosis**.
+Two records have no recorded diagnosis, leaving 780 labeled records for classification.
+
+The target classes are:
+
+| Diagnosis | Records | Percentage of Labeled Records |
+|---|---:|---:|
+| Appendicitis | 463 | 59.4% |
+| No appendicitis | 317 | 40.6% |
+
+**Feature types and data dictionary**
+
+The dataset includes 18 numerical input variables and 39 categorical input variables. Categorical fields include yes/no findings, labels, and clinical categories.
+
+| Feature Group | Variables and Descriptions |
+|---|---|
+| Demographics and Measurements | `Age` (patient age), `Sex`, `BMI`, `Height`, `Weight` |
+| Clinical Scores | `Alvarado_Score` and `Paedriatic_Appendicitis_Score` (appendicitis assessment scores) |
+| Symptoms and Examination | `Migratory_Pain`, `Lower_Right_Abd_Pain`, `Contralateral_Rebound_Tenderness`, `Coughing_Pain`, `Nausea`, `Loss_of_Appetite`, `Dysuria`, `Stool`, `Peritonitis`, `Psoas_Sign`, `Ipsilateral_Rebound_Tenderness` |
+| Laboratory Results | `Body_Temperature`, `WBC_Count`, `Neutrophil_Percentage`, `Segmented_Neutrophils`, `Neutrophilia`, `RBC_Count`, `Hemoglobin`, `RDW`, `Thrombocyte_Count`, `Ketones_in_Urine`, `RBC_in_Urine`, `WBC_in_Urine`, `CRP` |
+| Ultrasound | `US_Performed`, `US_Number`, `Appendix_on_US`, `Appendix_Diameter`, `Free_Fluids`, `Appendix_Wall_Layers`, `Target_Sign`, `Appendicolith`, `Perfusion`, `Perforation`, `Surrounding_Tissue_Reaction`, `Appendicular_Abscess`, `Abscess_Location`, `Pathological_Lymph_Nodes`, `Lymph_Nodes_Location`, `Bowel_Wall_Thickening`, `Conglomerate_of_Bowel_Loops`, `Ileus`, `Coprostasis`, `Meteorism`, `Enteritis`, `Gynecological_Findings` |
+| Target | `Diagnosis`: final recorded diagnosis, with classes `appendicitis` and `no appendicitis` |
+| Additional Recorded Fields | `Length_of_Stay`, `Management`, `Severity`, `Diagnosis_Presumptive`. These are present in the source data but excluded from the notebook's model inputs to reduce outcome leakage. |
+
+**Missing values**
+
+Blank values appear in all 58 columns. Missingness is especially high in some fields: **Abscess_Location** is missing for 769 records (98.3%), **Gynecological_Findings** for 756 (96.7%), and **Segmented_Neutrophils** for 728 (93.1%). Missing ultrasound findings are an important limitation. More than 70% of the 14 **ultrasound features** are missing.
+
+**Why this dataset is suitable**
+
+The dataset contains pediatric patient symptoms, examination findings, laboratory results, and ultrasound information relevant to the appendicitis classification problem. 
+
+Its recorded diagnosis provides the target label, and its range of feature types supports comparing models built with clinical and laboratory data against models that also use ultrasound findings.
 
 ## Methodology
 
@@ -73,12 +114,12 @@ The project includes a Streamlit web application that allows a user to:
 
 ## Project Structure
 
-- app.py : Streamlit application
-- models/ : saved trained machine learning models
-- data/ : dataset files
-- results/ : generated plots and visual outputs
-- README.md : project overview
-- requirements.txt : Python dependencies
+- app.py: Streamlit application
+- models/: saved trained machine learning models
+- data/: dataset files
+- results/: generated plots and visual outputs
+- README.md: project overview
+- requirements.txt: Python dependencies
 
 ## Setup
 
@@ -105,5 +146,5 @@ Note: Insert final metrics and evaluation figures here after the model is finali
 ## Limitations
 - The dataset comes from a single source and has a limited number of records.
 - The model has not yet been tested on data from other hospitals, so its performance may differ across different patient groups and clinical settings.
-- Missing values particularly in ultrasound findings, some ultrasound features having more than 70% of missing values. Although missing values are handled during preprocessing, the actual clinical information cannot always be recovered.
+- Missing values, particularly in ultrasound findings, with some ultrasound features having more than 70% missing values. Although missing values are handled during preprocessing, the actual clinical information cannot always be recovered.
 - The project focuses on model performance, but further testing is needed to check prediction reliability and suitable thresholds.
